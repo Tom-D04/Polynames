@@ -1,8 +1,8 @@
-import { RoomCode } from "./src/view/roomCode.js";
+import { GameMenu } from "./src/view/gameMenu.js";
 
 function run(){
-    let roomCode = new RoomCode();
-    roomCode.showRoomCode();
+    let gameMenu = new GameMenu();
+    gameMenu.showGameMenu();
 }
 
 window.addEventListener("load", run);

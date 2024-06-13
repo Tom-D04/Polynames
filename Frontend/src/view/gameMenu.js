@@ -3,16 +3,24 @@ export class GameMenu{
     }
 
     createGame(){
-
+        fetch("/Frontend/html/roomCode.html").then(response => response.text()).then(text => {
+            document.body.innerHTML = text;
+        });
     }
 
     joinGame(){
-
+        fetch("/Frontend/html/joinGame.html").then(response => response.text()).then(text => {
+            document.body.innerHTML = text;
+        });
     }
 
     showGameMenu(){
-        fetch("\Polynames\Frontend\src\view\gameMenu.html").then(response => response.text()).then(text => {
+        fetch("/Frontend/html/gameMenu.html").then(response => response.text()).then(text => {
             document.body.innerHTML = text;
+            let create = document.getElementById("create_game");
+            let join = document.getElementById("join_game");
+            create.addEventListener("click", this.createGame);
+            join.addEventListener("click", this.joinGame);
         });
     }
 }
