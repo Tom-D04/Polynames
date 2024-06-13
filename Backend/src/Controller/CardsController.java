@@ -26,9 +26,21 @@ public class CardsController {
 
     } 
 
+
+    public void initializeCards(WebServerContext context) {
+        try {
+            dao.initializeCards();
+            context.getResponse().json("Cartes initialisées");
+        } catch (Exception e) {
+            System.err.println("Erreur lors de l'initialisation des cartes");
+            e.printStackTrace();
+        }
+    }
+
     public void updateState(WebServerContext context) {
         try {
             String word = context.getRequest().getParam("word");
+            
             dao.updateState(word, false);
             context.getResponse().json("Carte mise à jour");
         } catch (Exception e) {

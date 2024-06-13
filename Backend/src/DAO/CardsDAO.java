@@ -1,7 +1,9 @@
 package DAO;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,18 +18,36 @@ public class CardsDAO {
 
     public CardsDAO() {
         try {
-            this.database = new polyNamesDatabase("localhost", 3306, "poly_names", "TOM", "123");
+            this.database = new polyNamesDatabase("localhost", 3306, "poly_names", "root", "");
         } catch (SQLException e) {
             System.out.println("Erreur lors de la connexion à la base de données");
             e.printStackTrace();
         }
     }
 
-    public void initialize_cards() {
+    public void reset_word_file() {
+        try {
+        try (BufferedReader br = new BufferedReader(new FileReader("./data/wordlist.txt"))) {
+            BufferedWriter bw = new BufferedWriter(new FileWriter("./data/temp_wordlist.txt"));
+            String line;
+            while((line = br.readLine()) != null){
+                bw.write(line);
+                bw.newLine();
+            }
+            bw.close();
+        }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void initializeCards() {
+        reset_word_file();
         reset_cards();
         try {
             var statement = this.database.prepareStatement("INSERT INTO card (word, color, state) VALUES (?, ?, ?)");
-            BufferedReader reader = new BufferedReader(new FileReader("wordlist.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader("./data/temp_wordlist.txt"));
             List<String> wordList = new ArrayList<>();
             String line;
             String[] colors = {"bleu", "noir", "blanc"};
@@ -87,7 +107,26 @@ public class CardsDAO {
         
     }
 
-    public void updateState(String word, boolean state) {
+    public String getCardByWord(String word) {
+        try {
+            var statement = this.database.prepareStatement("SELECT * FROM card WHERE word = ?");
+            statement.setString(1, word);
+            var result = statement.executeQuery();
+            while (result.next()) {
+                System.out.println(result.getString("word"));
+                System.out.println(result.getString("color"));
+                System.out.println(result.getBoolean("state"));
+                return result.getString("color");
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la récupération de la carte");
+            e.printStackTrace();
+            return "Erreur lors de la récupération de la carte";
+        }
+    }
+
+
+    public void flipCard(String word, boolean state) {
         try {
             var statement = this.database.prepareStatement("UPDATE card SET state = ? WHERE word = ?");
             statement.setBoolean(1, state);
