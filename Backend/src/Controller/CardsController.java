@@ -44,7 +44,7 @@ public class CardsController {
         try {
             String word = context.getRequest().getParam("word");
             cardDao.flipCard(word, 0);
-            gameDAO.updateScore(n, connexion_code);
+            gameDAO.updateScore(word, n, connexion_code);
 
             context.getResponse().json("Carte mise à jour");
         } catch (Exception e) {
