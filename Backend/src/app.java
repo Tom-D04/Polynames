@@ -12,7 +12,11 @@ public class app {
         GameController gameController = new GameController();
         HintController hintController = new HintController();
 
-        cardsController.initializeCards();
+        //cardsController.initializeCards();
+        webserver.getRouter().get(
+            "/createGame",
+            (WebServerContext context) -> { gameController.createGame(); }
+        );
         webserver.getRouter().get(
             "/getcards",
             (WebServerContext context) -> { cardsController.findAll(context); }
@@ -20,6 +24,11 @@ public class app {
         webserver.getRouter().get(
             "/cardColor/:cardWord",
             (WebServerContext context) -> { cardsController.findColorByWord(context); }
+        );
+
+        webserver.getRouter().get(
+            "/hint",
+            (WebServerContext context) -> { hintController.getHint(context); }
         );
 
         webserver.getRouter().post(
@@ -36,6 +45,8 @@ public class app {
             "/gameRound/:authentication_code",
             (WebServerContext context) -> { gameController.getTurn(context); }
         );
+
+
 
         
     }

@@ -3,6 +3,9 @@ package Controller;
 import webserver.WebServerContext;
 
 import DAO.HintDAO;
+
+import java.util.ArrayList;
+
 import DAO.GameDAO;
 import models.Hint;
 
@@ -26,15 +29,19 @@ public class HintController {
         }
     }
 
-    public Hint getHint() {
-        try {
-            Hint hint = dao.getHint();
-            return hint;
+    public ArrayList<Hint> getHint(WebServerContext context) {
+
+        ArrayList<Hint> hint = new ArrayList<Hint>();
+        
+        try {        
+            hint = dao.getHint();
+            context.getResponse().json(hint);
+            
         } catch (Exception e) {
             System.err.println("Erreur lors de la récupération de l'indice");
             e.printStackTrace();
         }
-        return null;   
+        return hint;  
     }
 
 }

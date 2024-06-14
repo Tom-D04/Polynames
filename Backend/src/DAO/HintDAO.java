@@ -3,6 +3,7 @@ package DAO;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import database.polyNamesDatabase;
 import models.Hint;
@@ -68,17 +69,20 @@ public class HintDAO {
 
     }
 
-    public Hint getHint() {
+    public ArrayList<Hint> getHint() {
+        ArrayList<Hint> hints = new ArrayList<Hint>();
         try {
-            PreparedStatement statement = this.database.prepareStatement("SELECT * FROM hint WHERE id = ?");
-            statement.setInt(1, 0);
-            ResultSet result = statement.executeQuery();
-            result.next();
+            PreparedStatement statement = this.database.prepareStatement("SELECT * FROM `hint` WHERE id = ?");
+            statement.setInt(1, 1);
+            var result = statement.executeQuery();
+            while (result.next()) {
+                hints.add(new Hint(result.getInt("id"), result.getString("value"), result.getInt("cards_number")));
+                
+            }
 
-            return new Hint(0, result.getString("value"), result.getInt("cards_number"));
-
+            return hints;
         } catch (SQLException e) {
-            System.err.println("Erreur lors de la récupération de l'indice");
+            System.err.println("Erreur lors de la récupération de l'indice dao");
             e.printStackTrace();
             return null;
         }
