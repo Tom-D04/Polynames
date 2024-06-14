@@ -1,0 +1,17 @@
+body{
+    background-image: url('/Frontend/image/bg.jpg');
+    background-position: center;
+    display : flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
+    font-weight: bold;
+    font-family: 'Courier New', Courier;
+    color: white;
+    text-align: center;
+}
+
+button:disabled{
+    cursor: not-allowed;
+    filter: grayscale(100%);
+}
