@@ -122,7 +122,7 @@ public class CardsDAO {
         try {
             PreparedStatement statement = this.database.prepareStatement("SELECT * FROM card WHERE word = ?");
             statement.setString(1, word);
-            var result = statement.executeQuery();
+            ResultSet result = statement.executeQuery();
             while (result.next()) {
                 System.out.println(result.getString("word"));
                 System.out.println(result.getString("color"));
@@ -138,12 +138,13 @@ public class CardsDAO {
     }
 
 
-    public void flipCard(String word, boolean state) {
+    public void flipCard(String word, int state) {
         try {
             PreparedStatement statement = this.database.prepareStatement("UPDATE card SET state = ? WHERE word = ?");
-            statement.setBoolean(1, state);
+            statement.setInt(1, state);
             statement.setString(2, word);
             statement.executeUpdate();
+            System.out.println("Carte mise à jour");
         } catch (SQLException e) {
             System.out.println("Erreur lors de la mise à jour de l'état de la carte");
             e.printStackTrace();

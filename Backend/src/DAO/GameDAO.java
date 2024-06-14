@@ -12,6 +12,7 @@ import DAO.CardsDAO;
 public class GameDAO {
 
     private CardsDAO CardsDao;
+    private GameDAO gameDAO;
     private polyNamesDatabase database;
     
     public GameDAO() {
@@ -24,18 +25,20 @@ public class GameDAO {
         }
     }
 
-    public void createGame(Game game) {
+    public void createGame(WebServerContext context, Game game) {
         try {
             PreparedStatement deleteGameStatement = this.database.prepareStatement("DELETE FROM game");
             deleteGameStatement.executeUpdate();
-            PreparedStatement statement = this.database.prepareStatement("INSERT INTO game (authentication_code, score, turn) VALUES (?, ?, ?)");
+            PreparedStatement statement = this.database.prepareStatement("INSERT INTO game (authentication_code, score, turn, spymaster, operative) VALUES (?, ?, ?, ?, ?)");
             Random rand = new Random();
 
             int randomCode = rand.nextInt(9999);
 
-            statement.setInt(1, randomCode);
+            statement.setInt(1, 0); //à changer en randomCode
             statement.setInt(2, 0);
             statement.setInt(3, 0);
+            statement.setInt(4, 1);
+            statement.setInt(5, 2);
 
             statement.executeUpdate();
 
@@ -47,8 +50,26 @@ public class GameDAO {
         }
     }
 
-    public void updateScore(int score, int connexion_code) {
+    public void getScore(WebServerContext context) {
         try {
+            PreparedStatement statement = this.database.prepareStatement("SELECT score FROM game WHERE connexion_code = ?");
+            statement.setInt(1, 1);
+            var result = statement.executeQuery();
+            while (result.next()) {
+                System.out.println(result.getInt("score"));
+                context.getResponse().json(result.getInt("score"));
+            }
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la récupération du score");
+            e.printStackTrace();
+        }
+    }
+
+    public void updateScore(String word, int flippedCardIndex, int connexion_code) {
+        //int score = this.gameDAO.getScore(connexion_code);
+        int score = 0; 
+        try {
+            
             PreparedStatement statement = this.database.prepareStatement("UPDATE game SET score = ? WHERE connexion_code = ?");
             statement.setInt(1, score);
             statement.setInt(2, connexion_code);
@@ -102,4 +123,8 @@ public class GameDAO {
         return 0;
     }
 
+
+
 }
+
+

@@ -3,11 +3,13 @@ package Controller;
 import java.util.ArrayList;
 
 import DAO.CardsDAO;
+import DAO.GameDAO;
 import models.Card;
 import webserver.WebServerContext;
 
 public class CardsController {
-    CardsDAO dao = new CardsDAO();
+    CardsDAO cardDao = new CardsDAO();
+    GameDAO gameDAO = new GameDAO();
 
     public CardsController() {
         
@@ -16,7 +18,7 @@ public class CardsController {
         
         ArrayList<Card> cards = new ArrayList<Card>();
         try {
-            cards = dao.findAll();
+            cards = cardDao.findAll();
             context.getResponse().json(cards);
         } catch (Exception e) {
             System.err.println("Erreur lors de la récupération des cartes");
@@ -29,7 +31,7 @@ public class CardsController {
 
     public void initializeCards() {
         try {
-            dao.initializeCards();
+            cardDao.initializeCards();
         } catch (Exception e) {
             System.err.println("Erreur lors de l'initialisation des cartes");
             e.printStackTrace();
@@ -37,10 +39,12 @@ public class CardsController {
     }
 
     public void flipCard(WebServerContext context) {
+        int n = Integer.parseInt(context.getRequest().getParam("flippedCardIndex"));
+        int connexion_code = Integer.parseInt(context.getRequest().getParam("connexion_code"));
         try {
             String word = context.getRequest().getParam("word");
-            dao.flipCard(word, false);
-
+            cardDao.flipCard(word, 0);
+            gameDAO.updateScore(word, n, connexion_code);
 
             context.getResponse().json("Carte mise à jour");
         } catch (Exception e) {
@@ -52,8 +56,7 @@ public class CardsController {
     public void findColorByWord(WebServerContext context) {
         try {
             String word = context.getRequest().getParam("word");
-            word = "Australie";
-            String color = dao.findColorByWord(word);
+            String color = cardDao.findColorByWord(word);
             context.getResponse().json(color);
         } catch (Exception e) {
             System.err.println("Erreur lors de la récupération de la carte");

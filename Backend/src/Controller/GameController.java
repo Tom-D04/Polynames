@@ -9,10 +9,11 @@ public class GameController {
     public GameController() {
         
     }
-    public void createGame() {
-        Game newGame = new Game(0, 0, 0, "Pseudo1", "Pseudo1");
+    public void createGame(WebServerContext context) {
+        Game newGame = new Game(0, 0, 0, "Pseudo1", "Pseudo2");
         try {
-            gameDAO.createGame(newGame);
+            gameDAO.createGame(context, newGame);
+            context.getResponse().json("Partie créée");
         } catch (Exception e) {
             System.err.println("Erreur lors de la création de la partie");
             e.printStackTrace();
@@ -20,9 +21,9 @@ public class GameController {
     }
 
     public void updateScore() {
-        
+        String word = "";
         try {
-            gameDAO.updateScore(1, 0);
+            gameDAO.updateScore(word, 1, 0);
         } catch (Exception e) {
             System.err.println("Erreur lors de la mise à jour du score");
             e.printStackTrace();

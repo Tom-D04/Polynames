@@ -18,11 +18,13 @@ public class HintController {
         
     }
     public void updateHint(WebServerContext context) {
-        int code = Integer.parseInt(context.getRequest().getParam("authentication_code"));
-        code = 1;
+        int code = 1;
+        String hint = context.getRequest().getParam("hint");
+        int cards_number = Integer.parseInt(context.getRequest().getParam("cards_number"));
         try {      
-            dao.updateHint(context);
+            dao.updateHint(hint, cards_number);
             gameDAO.nextTurn(code);
+            context.getResponse().json("Carte mise à jour");
         } catch (Exception e) {
             System.err.println("Erreur lors de la mise à jour de l'indice");
             e.printStackTrace();
@@ -30,9 +32,8 @@ public class HintController {
     }
 
     public ArrayList<Hint> getHint(WebServerContext context) {
-
-        ArrayList<Hint> hint = new ArrayList<Hint>();
         
+        ArrayList<Hint> hint = new ArrayList<Hint>();
         try {        
             hint = dao.getHint();
             context.getResponse().json(hint);
