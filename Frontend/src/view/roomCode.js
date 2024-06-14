@@ -1,8 +1,10 @@
+import {GameMenu} from "./gameMenu.js";
+
 export class RoomCode{
     constructor(){
     }
 
-    cancel(){
+    goToMenu(){
         fetch("/Frontend/html/gameMenu.html").then(response => response.text()).then(text => {
             document.body.innerHTML = text;
         });
@@ -11,8 +13,11 @@ export class RoomCode{
     showRoomCode(){
         fetch("/Frontend/html/roomCode.html").then(response => response.text()).then(text => {
             document.body.innerHTML = text;
-            let cancel = document.getElementById("cancel_join");
-            cancel.addEventListener("click", this.cancel);
+            let menu = document.getElementById("menu_button");
+            menu.addEventListener("click", () => {
+                console.log("menu button clicked");
+                new GameMenu().showGameMenu();
+            });
         });
     }
 }
