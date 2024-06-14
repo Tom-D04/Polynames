@@ -1,4 +1,4 @@
-export class gameService{
+export class GameService{
     constructor(){
         this.time = 0;
         this.timer = this.startTimer();
@@ -41,7 +41,7 @@ export class gameService{
             else{
                 showTime = time;
             }
-            document.getElementById("timer").innerHTML = showTime;
+            document.getElementById("time").innerHTML = showTime;
         }, 1000);
     }
 }

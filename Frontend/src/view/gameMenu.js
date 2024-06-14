@@ -9,7 +9,7 @@ export class GameMenu{
     }
 
     joinGame(){
-        fetch("/Frontend/html/joinGame.html").then(response => response.text()).then(text => {
+        fetch("/Frontend/html/waitHost.html").then(response => response.text()).then(text => {
             document.body.innerHTML = text;
         });
     }
