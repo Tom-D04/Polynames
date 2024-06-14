@@ -10,11 +10,11 @@ export class CardService{
         }
     }
 
-    static async selectCard(){
-        const response = await fetch('http://localhost:8081/selectcard');
-        if(response.status === 200){
-            let data = await response.json();
-            return data;
-        }
-    }
+    // static async selectCard(){
+    //     const response = await fetch('http://localhost:8081/selectcard');
+    //     if(response.status === 200){
+    //         let data = await response.json();
+    //         return data;
+    //     }
+    // }
 }
