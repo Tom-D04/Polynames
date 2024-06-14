@@ -1,4 +1,6 @@
 import Controller.CardsController;
+import Controller.GameController;
+import Controller.HintController;
 import webserver.WebServerContext;
 import webserver.WebServer;
 
@@ -6,27 +8,35 @@ public class app {
     public static void main(String[] args) throws Exception {
         WebServer webserver = new WebServer();
         webserver.listen(8081);
-        CardsController controller = new CardsController();
+        CardsController cardsController = new CardsController();
+        GameController gameController = new GameController();
+        HintController hintController = new HintController();
 
-        controller.initializeCards();
+        cardsController.initializeCards();
         webserver.getRouter().get(
             "/getcards",
-            (WebServerContext context) -> { controller.findAll(context); }
+            (WebServerContext context) -> { cardsController.findAll(context); }
         );
         webserver.getRouter().get(
             "/cardColor/:cardWord",
-            (WebServerContext context) -> { controller.findColorByWord(context); }
+            (WebServerContext context) -> { cardsController.findColorByWord(context); }
         );
 
         webserver.getRouter().post(
-            "/flipcard",
-            (WebServerContext context) -> { controller.flipCard(context); }
+            "/flipcard/:cardWord",
+            (WebServerContext context) -> { cardsController.flipCard(context); }
+        );
+
+        webserver.getRouter().post(
+            "/updateHint/:authentication_code",
+            (WebServerContext context) -> { hintController.updateHint(context); }
         );
 
         webserver.getRouter().get(
-            "/getcards",
-            (WebServerContext context) -> { controller.findAll(context); }
+            "/gameRound/:authentication_code",
+            (WebServerContext context) -> { gameController.getTurn(context); }
         );
+
         
     }
 }

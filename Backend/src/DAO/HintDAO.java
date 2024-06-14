@@ -68,4 +68,20 @@ public class HintDAO {
 
     }
 
+    public Hint getHint() {
+        try {
+            PreparedStatement statement = this.database.prepareStatement("SELECT * FROM hint WHERE id = ?");
+            statement.setInt(1, 0);
+            ResultSet result = statement.executeQuery();
+            result.next();
+
+            return new Hint(0, result.getString("value"), result.getInt("cards_number"));
+
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la récupération de l'indice");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

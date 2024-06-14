@@ -2,6 +2,7 @@ package Controller;
 
 import DAO.GameDAO;
 import models.Game;
+import webserver.WebServerContext;
 
 public class GameController {
     GameDAO gameDAO = new GameDAO();
@@ -28,4 +29,22 @@ public class GameController {
         }
     }
 
+    public void nextTurn() {
+        try {
+            gameDAO.nextTurn(0);
+        } catch (Exception e) {
+            System.err.println("Erreur lors du passage au tour suivant");
+            e.printStackTrace();   
+        }
+    }
+
+    public void getTurn(WebServerContext context) {
+        int code = Integer.parseInt(context.getRequest().getParam("authentication_code")); 
+        try {
+            gameDAO.getTurn(context, code);
+        } catch (Exception e) {
+            System.err.println("Erreur lors de la récupération du tour");
+            e.printStackTrace();    
+        }
+    }
 }
