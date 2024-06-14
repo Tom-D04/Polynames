@@ -1,13 +1,11 @@
 package DAO;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import database.polyNamesDatabase;
@@ -25,41 +23,43 @@ public class CardsDAO {
         }
     }
 
-    public void reset_word_file() {
+    public void initializeWords() throws IOException {
         try {
-        try (BufferedReader br = new BufferedReader(new FileReader("./data/wordlist.txt"))) {
-            BufferedWriter bw = new BufferedWriter(new FileWriter("./data/temp_wordlist.txt"));
-            String line;
-            while((line = br.readLine()) != null){
-                bw.write(line);
-                bw.newLine();
+            var statement = this.database.prepareStatement("INSERT INTO words (word) VALUES (?)");
+            BufferedReader reader = new BufferedReader(new FileReader("src/words.txt"));
+            String line = reader.readLine();
+            while (line != null) {
+                statement.setString(1, line);
+                statement.executeUpdate();
+                line = reader.readLine();
             }
-            bw.close();
-        }
-        }
-        catch(Exception e){
+            reader.close();
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de l'initialisation des mots");
             e.printStackTrace();
+
         }
     }
 
+
+
     public void initializeCards() {
-        reset_word_file();
         reset_cards();
         try {
             var statement = this.database.prepareStatement("INSERT INTO card (word, color, state) VALUES (?, ?, ?)");
-            BufferedReader reader = new BufferedReader(new FileReader("./data/temp_wordlist.txt"));
-            List<String> wordList = new ArrayList<>();
-            String line;
-            String[] colors = {"bleu", "noir", "blanc"};
+            ArrayList<String> wordList = new ArrayList<>();
+            String[] colors = {"bleu", "noir", "gris"};
             Random rand = new Random();
 
-            while ((line = reader.readLine()) != null) {
-                wordList.add(line);
+            String query = "SELECT word FROM words";
+            ResultSet result = statement.executeQuery(query);
+            while (result.next()) {
+                wordList.add(result.getString("word"));
             }
 
             for (int i = 0; i < 25; i++) {
-                if (reader.readLine() != null) {
-                    int randomWordIndex = rand.nextInt(400);
+                if (!wordList.isEmpty()) {
+                    int randomWordIndex = rand.nextInt(wordList.size());
                     statement.setString(1, wordList.get(randomWordIndex));
                     statement.setString(2, colors[rand.nextInt(colors.length)]);
                     statement.setBoolean(3, true);
@@ -67,9 +67,8 @@ public class CardsDAO {
                     wordList.remove(randomWordIndex); //On retire les lignes déjà utilisées pour éviter les doublons
                 }
             }
-            reader.close();
 
-        } catch (SQLException | IOException e) {
+        } catch (SQLException e) {
         System.out.println("Erreur lors de l'initialisation des cartes");
         e.printStackTrace();
         }
@@ -121,8 +120,9 @@ public class CardsDAO {
         } catch (SQLException e) {
             System.out.println("Erreur lors de la récupération de la carte");
             e.printStackTrace();
-            return "Erreur lors de la récupération de la carte";
         }
+        
+        return ""; 
     }
 
 

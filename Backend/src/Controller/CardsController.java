@@ -41,10 +41,21 @@ public class CardsController {
         try {
             String word = context.getRequest().getParam("word");
             
-            dao.updateState(word, false);
+            dao.flipCard(word, false);
             context.getResponse().json("Carte mise à jour");
         } catch (Exception e) {
             System.err.println("Erreur lors de la mise à jour de l'état de la carte");
+            e.printStackTrace();
+        }
+    }
+
+    public void getCardByWord(WebServerContext context) {
+        try {
+            String word = context.getRequest().getParam("word");
+            String color = dao.getCardByWord(word);
+            context.getResponse().json(color);
+        } catch (Exception e) {
+            System.err.println("Erreur lors de la récupération de la carte");
             e.printStackTrace();
         }
     }
