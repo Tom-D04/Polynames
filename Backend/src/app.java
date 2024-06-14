@@ -13,9 +13,9 @@ public class app {
         HintController hintController = new HintController();
 
         //cardsController.initializeCards();
-        webserver.getRouter().get(
-            "/createGame",
-            (WebServerContext context) -> { gameController.createGame(); }
+        webserver.getRouter().post(
+            "/creategame",
+            (WebServerContext context) -> { gameController.createGame(context); }
         );
         webserver.getRouter().get(
             "/getcards",
@@ -32,12 +32,12 @@ public class app {
         );
 
         webserver.getRouter().post(
-            "/flipcard/:cardWord",
+            "/flipcard",
             (WebServerContext context) -> { cardsController.flipCard(context); }
         );
 
         webserver.getRouter().post(
-            "/updateHint/:authentication_code",
+            "/updatehint",
             (WebServerContext context) -> { hintController.updateHint(context); }
         );
 
@@ -45,6 +45,7 @@ public class app {
             "/gameRound/:authentication_code",
             (WebServerContext context) -> { gameController.getTurn(context); }
         );
+
 
 
 

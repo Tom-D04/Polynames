@@ -23,16 +23,15 @@ public class HintDAO {
         }
     }
 
-    public void updateHint(WebServerContext context) {
-        GameDAO gameDAO = new GameDAO();
+    public void updateHint(String hint, int cards_number) {
+
         try {
-            String hint = context.getRequest().getParam("hint");
-
-
             if (!isHintInDatabase(hint)) {
-                PreparedStatement statement = this.database.prepareStatement("UPDATE hint SET value = ? WHERE id = ?");
+                PreparedStatement statement = this.database.prepareStatement("UPDATE hint SET hintValue = ?, cards_number = ? WHERE id = ?");
                 statement.setString(1, hint);
-                statement.setInt(2, 0);
+                statement.setInt(2, cards_number);
+                statement.setInt(3, 1);
+                System.out.println("Indice mis à jour");
                 statement.executeUpdate();
                 
                 System.out.println("Indice mis à jour");
