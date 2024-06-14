@@ -1,9 +1,13 @@
 package DAO;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import database.polyNamesDatabase;
 import models.Hint;
+
+import webserver.WebServerContext;
 
 public class HintDAO {
 
@@ -18,21 +22,50 @@ public class HintDAO {
         }
     }
 
-    public void newHint(Hint hint) {
+    public void updateHint(WebServerContext context) {
+        GameDAO gameDAO = new GameDAO();
         try {
-            
-            var statement = this.database.prepareStatement("INSERT INTO hint (id, hint, cards) VALUES (?, ?, ?)");
-            statement.setInt(1, hint.id());
-            statement.setString(2, hint.value());
-            statement.setInt(3, hint.cards_number());
-            statement.executeUpdate();
+            String hint = context.getRequest().getParam("hint");
+
+
+            if (!isHintInDatabase(hint)) {
+                PreparedStatement statement = this.database.prepareStatement("UPDATE hint SET value = ? WHERE id = ?");
+                statement.setString(1, hint);
+                statement.setInt(2, 0);
+                statement.executeUpdate();
+                
+                System.out.println("Indice mis à jour");
+            } else {
+                System.out.println("L'indice est déjà présent dans la base de données de cartes");
+            }
         } catch (SQLException e) {
-            System.err.println("Erreur lors de la création de l'indice");
+            System.err.println("Erreur lors de la mise à jour de l'indice");
             e.printStackTrace();
         }
     }
+    
+    private boolean isHintInDatabase(String hint) {
+        try {
+            String[] words = hint.split("\\s+"); //Divise la phrase en mots
+            PreparedStatement statement = this.database.prepareStatement("SELECT COUNT(*) FROM cards WHERE word IN (?)");
 
+            for (String word : words) {
+                statement.setString(1, word);
+                ResultSet resultSet = statement.executeQuery();
+                resultSet.next();
+                int count = resultSet.getInt(1);
+                if (count > 0) {
+                    return false; //Si un mot est trouvé dans la base de données, retourne false
+                }
+            }
 
+            return true; //Si aucun mot n'est trouvé dans la base de données, retourne true
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la vérification de l'indice dans la base de données de cartes");
+            e.printStackTrace();
+            return false;
+        }
 
+    }
 
 }

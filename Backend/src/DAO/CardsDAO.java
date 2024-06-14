@@ -3,6 +3,7 @@ package DAO;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.Random;
 
 import database.polyNamesDatabase;
 import models.Card;
+import DAO.GameDAO;
 
 public class CardsDAO {
     private polyNamesDatabase database;
@@ -25,7 +27,7 @@ public class CardsDAO {
 
     public void initializeWords() throws IOException {
         try {
-            var statement = this.database.prepareStatement("INSERT INTO words (word) VALUES (?)");
+            PreparedStatement statement = this.database.prepareStatement("INSERT INTO words (word) VALUES (?)");
             BufferedReader reader = new BufferedReader(new FileReader("src/words.txt"));
             String line = reader.readLine();
             while (line != null) {
@@ -42,41 +44,51 @@ public class CardsDAO {
     }
 
 
-
     public void initializeCards() {
         reset_cards();
         try {
-            var statement = this.database.prepareStatement("INSERT INTO card (word, color, state) VALUES (?, ?, ?)");
+            PreparedStatement statement_insert = this.database.prepareStatement("INSERT INTO card (word, color, state) VALUES (?, ?, ?)");
+            String updateQuery = "SELECT word FROM words";
+            PreparedStatement statementUpdate = this.database.prepareStatement(updateQuery);
             ArrayList<String> wordList = new ArrayList<>();
-            String[] colors = {"bleu", "noir", "gris"};
+            String[] colors = {"blue", "black", "grey"};
+            int[] colorCounts = {0, 0, 0}; // Compteurs pour bleu, noir et gris respectivement
             Random rand = new Random();
-
-            String query = "SELECT word FROM words";
-            ResultSet result = statement.executeQuery(query);
+    
+            
+            ResultSet result = statementUpdate.executeQuery();
             while (result.next()) {
                 wordList.add(result.getString("word"));
             }
-
+    
             for (int i = 0; i < 25; i++) {
                 if (!wordList.isEmpty()) {
+                    int randomColorIndex;
+                    do {
+                        randomColorIndex = rand.nextInt(colors.length);
+                    } while ((randomColorIndex == 0 && colorCounts[0] >= 8) ||
+                            (randomColorIndex == 1 && colorCounts[1] >= 2) || 
+                            (randomColorIndex == 2 && colorCounts[2] >= 15));
+    
                     int randomWordIndex = rand.nextInt(wordList.size());
-                    statement.setString(1, wordList.get(randomWordIndex));
-                    statement.setString(2, colors[rand.nextInt(colors.length)]);
-                    statement.setBoolean(3, true);
-                    statement.executeUpdate();
-                    wordList.remove(randomWordIndex); //On retire les lignes déjà utilisées pour éviter les doublons
+                    statement_insert.setString(1, wordList.get(randomWordIndex));
+                    statement_insert.setString(2, colors[randomColorIndex]);
+                    statement_insert.setBoolean(3, true);
+                    statement_insert.executeUpdate();
+                    wordList.remove(randomWordIndex); 
+                    colorCounts[randomColorIndex]++; // On incrémente le compteur de la couleur choisie
                 }
             }
-
+    
         } catch (SQLException e) {
-        System.out.println("Erreur lors de l'initialisation des cartes");
-        e.printStackTrace();
+            System.out.println("Erreur lors de l'initialisation des cartes");
+            e.printStackTrace();
         }
     }
 
     public void reset_cards() {
         try {
-            var statement = this.database.prepareStatement("DELETE FROM card");
+            PreparedStatement statement = this.database.prepareStatement("DELETE FROM card");
             statement.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Erreur lors de la réinitialisation des cartes");
@@ -87,7 +99,7 @@ public class CardsDAO {
     public ArrayList<Card> findAll() {
         ArrayList<Card> cards = new ArrayList<Card>();
         try {
-            var statement = this.database.prepareStatement("SELECT * FROM card");
+            PreparedStatement statement = this.database.prepareStatement("SELECT * FROM card");
             var result = statement.executeQuery();
 
             while (result.next()) {
@@ -106,9 +118,9 @@ public class CardsDAO {
         
     }
 
-    public String getCardByWord(String word) {
+    public String findColorByWord(String word) {
         try {
-            var statement = this.database.prepareStatement("SELECT * FROM card WHERE word = ?");
+            PreparedStatement statement = this.database.prepareStatement("SELECT * FROM card WHERE word = ?");
             statement.setString(1, word);
             var result = statement.executeQuery();
             while (result.next()) {
@@ -128,7 +140,7 @@ public class CardsDAO {
 
     public void flipCard(String word, boolean state) {
         try {
-            var statement = this.database.prepareStatement("UPDATE card SET state = ? WHERE word = ?");
+            PreparedStatement statement = this.database.prepareStatement("UPDATE card SET state = ? WHERE word = ?");
             statement.setBoolean(1, state);
             statement.setString(2, word);
             statement.executeUpdate();

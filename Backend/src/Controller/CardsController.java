@@ -27,21 +27,21 @@ public class CardsController {
     } 
 
 
-    public void initializeCards(WebServerContext context) {
+    public void initializeCards() {
         try {
             dao.initializeCards();
-            context.getResponse().json("Cartes initialisées");
         } catch (Exception e) {
             System.err.println("Erreur lors de l'initialisation des cartes");
             e.printStackTrace();
         }
     }
 
-    public void updateState(WebServerContext context) {
+    public void flipCard(WebServerContext context) {
         try {
             String word = context.getRequest().getParam("word");
-            
             dao.flipCard(word, false);
+
+
             context.getResponse().json("Carte mise à jour");
         } catch (Exception e) {
             System.err.println("Erreur lors de la mise à jour de l'état de la carte");
@@ -49,10 +49,11 @@ public class CardsController {
         }
     }
 
-    public void getCardByWord(WebServerContext context) {
+    public void findColorByWord(WebServerContext context) {
         try {
             String word = context.getRequest().getParam("word");
-            String color = dao.getCardByWord(word);
+            word = "Australie";
+            String color = dao.findColorByWord(word);
             context.getResponse().json(color);
         } catch (Exception e) {
             System.err.println("Erreur lors de la récupération de la carte");
