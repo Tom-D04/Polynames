@@ -1,17 +1,88 @@
-body{
-    background-image: url('/Frontend/image/bg.jpg');
-    background-position: center;
-    display : flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 50px;
-    font-weight: bold;
-    font-family: 'Courier New', Courier;
+
+body, html {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+h1 {
+    text-align: center;
+    color: #222;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007BFF;
     color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.button_container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+#menu-page .text_center {
+    margin-top: 50px;
+    font-size: 24px;
+}
+
+#choose_role {
+    text-align: center;
+    margin-top: 100px;
+}
+
+#choose_role button {
+    margin: 10px;
+}
+
+.card {
+    display: inline-block;
+    margin: 5px;
+    border: 1px solid #ddd;
+    text-align: center;
+    background-color: #fff;
+}
+
+#timer h1, #timer p {
     text-align: center;
 }
 
-button:disabled{
-    cursor: not-allowed;
-    filter: grayscale(100%);
+#game {
+    padding: 20px;
+    margin-top: 20px;
+}
+
+input[type="text"], input[type="number"] {
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#wait_host, #room_code_page {
+    text-align: center;
+    margin-top: 100px;
+}
+
+#grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin: 20px;
+}
+
+#hint_box {
+    text-align: center;
+    margin-top: 20px;
 }

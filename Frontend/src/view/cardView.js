@@ -1,8 +1,10 @@
+import { CardService } from '../service/cardService.js';
+
 export class CardView{
     constructor(){
     }
 
-    static async showCardsSpyMaster(){
+    async showCardsSpyMaster(){
         const cards = await CardService.getCards();
         cards.forEach(card =>{
             this.#showCardSpyMaster(card);
@@ -10,7 +12,7 @@ export class CardView{
         })
     }
 
-    static #showCardSpyMaster(cardInfo){
+    #showCardSpyMaster(cardInfo){
         const card = document.createElement('div');
         card.classList.add('card');
         document.querySelector('.cards').appendChild(grid);
